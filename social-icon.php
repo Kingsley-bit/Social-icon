@@ -139,6 +139,22 @@ function custom_social_sharing_validate_options($input) {
     } else {
         $output['style'] = 'default'; // Default style if no valid style is selected
     }
+    if (isset($input['labels']) && is_array($input['labels'])) {
+        foreach ($input['labels'] as $key => $value) {
+            // Sanitize each label value
+            $output['labels'][$key] = sanitize_text_field($value);
+        }
+    }
+    // Validate and sanitize custom CSS classes
+    if (isset($input['css_classes'])) {
+        // Sanitize the input to remove any potentially harmful content
+        $output['css_classes'] = sanitize_text_field($input['css_classes']);
+    }
+    if (isset($input['tracking'])) {
+        // Ensure that the value is either 1 or 0
+        $output['tracking'] = $input['tracking'] ? 1 : 0;
+    }
+
     return $output;
 }
 
@@ -194,10 +210,15 @@ function custom_social_sharing_labels_callback() {
         // Add more social networks here
     );
 
-    foreach ($labels as $key => $label) {
-        echo '<label for="custom_social_sharing_label_' . $key . '">' . $label . ': </label>';
-        echo '<input type="text" id="custom_social_sharing_label_' . $key . '" name="custom_social_sharing_options[labels][' . $key . ']" value="' . esc_attr($options['labels'][$key]) . '" /><br>';
-    }
+   // Check if the 'labels' key exists in the options array
+   $options_labels = isset($options['labels']) ? $options['labels'] : array();
+
+   foreach ($labels as $key => $label) {
+       // Use isset() to avoid accessing undefined array keys
+       $value = isset($options_labels[$key]) ? esc_attr($options_labels[$key]) : '';
+       echo '<label for="custom_social_sharing_label_' . $key . '">' . $label . ': </label>';
+       echo '<input type="text" id="custom_social_sharing_label_' . $key . '" name="custom_social_sharing_options[labels][' . $key . ']" value="' . $value . '" /><br>';
+   }
 }
 
 // Add custom CSS classes field
@@ -210,7 +231,9 @@ function custom_social_sharing_css_classes_callback() {
 // Add event tracking field
 function custom_social_sharing_tracking_callback() {
     $options = get_option('custom_social_sharing_options');
-    echo '<label><input type="checkbox" id="custom_social_sharing_tracking" name="custom_social_sharing_options[tracking]" value="1" ' . checked(1, $options['tracking'], false) . ' /> Enable Event Tracking</label>';
+    $tracking_checked = isset($options['tracking']) && $options['tracking'] ? 'checked' : '';
+
+    echo '<label><input type="checkbox" id="custom_social_sharing_tracking" name="custom_social_sharing_options[tracking]" value="1" ' . $tracking_checked . ' /> Enable Event Tracking</label>';
     echo '<p class="description">Track social sharing events using Google Analytics or other analytics tools.</p>';
 }
 
