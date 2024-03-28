@@ -18,15 +18,16 @@ class KingSocialIcon{
     add_filter('the_content', array($this,'custom_social_sharing_buttons'));
     add_action('admin_menu', array($this,'custom_social_sharing_options_page' ));
     add_action('admin_init', array($this, 'custom_social_sharing_initialize_settings'));
+    add_action('wp_enqueue_scripts', array($this, 'custom_social_sharing_scripts'));
     }
 
 
-// Enqueue styles and scripts
-// function custom_social_sharing_scripts() {
-//     wp_enqueue_style('custom-social-sharing-style', plugins_url('css/style.css', __FILE__));
-//     wp_enqueue_script('custom-social-sharing-script', plugins_url('js/script.js', __FILE__), array('jquery'), '1.0', true);
-// }
-
+//Enqueue styles and scripts
+function custom_social_sharing_scripts() {
+    wp_enqueue_style('custom-social-sharing-style', plugins_url('css/style.css', __FILE__));
+    wp_enqueue_script('custom-social-sharing-script', plugins_url('js/script.js', __FILE__), array('jquery'), '1.0', true);
+}
+    
 
 
 // Add options page
@@ -174,8 +175,8 @@ function custom_social_sharing_enable_callback() {
 function custom_social_sharing_networks_callback() {
     $options = get_option('custom_social_sharing_options');
     $networks = array(
-        'facebook' => 'Facebook',
-        'twitter' => 'Twitter',
+        'F' => 'Facebook',
+        'X' => 'Twitter',
         // Add more social networks here
     );
 
@@ -245,17 +246,17 @@ function custom_social_sharing_tracking_callback() {
 function custom_social_sharing_buttons($content) {
     $options = get_option('custom_social_sharing_options');
     if ($options['enable'] && is_singular()) { // Display only if enabled and on single post/page
-        $buttons_html = '<div class="custom-social-sharing ' . esc_attr($options['css_classes']) . '">';
+        $buttons_html = '<div class="custom-social-sharing ' . esc_attr($options['css_classes']) . ' social-icons-container">';
 
         $networks = $options['networks'];
         foreach ($networks as $network => $enabled) {
             if ($enabled) {
                 $label = !empty($options['labels'][$network]) ? $options['labels'][$network] : ucfirst($network);
                 switch ($network) {
-                    case 'facebook':
+                    case 'F':
                         $url = 'https://www.facebook.com/sharer/sharer.php?u=' . get_permalink();
                         break;
-                    case 'twitter':
+                    case 'X':
                         $url = 'https://twitter.com/intent/tweet?url=' . get_permalink();
                         break;
                     // Add more cases for other social networks here
@@ -264,7 +265,11 @@ function custom_social_sharing_buttons($content) {
                         break;
                 }
                 if (!empty($url)) {
-                    $buttons_html .= '<a href="' . esc_url($url) . '" target="_blank" class="social-button ' . esc_attr($options['style']) . '">' . esc_html($label) . '</a>';
+                    // Generate HTML for both button and label
+                    $buttons_html .= '<div class="social-icon-wrapper">';
+                    $buttons_html .= '<a href="' . esc_url($url) . '" target="_blank" class="social-icon ' . esc_attr($options['style']) . '">' . esc_html($network) . '</a>';
+                    $buttons_html .= '<span class="social-icon-label">' . esc_html($label) . '</span>';
+                    $buttons_html .= '</div>';
                 }
             }
         }
@@ -275,5 +280,6 @@ function custom_social_sharing_buttons($content) {
     }
     return $content;
 }
+
 }
 $kingsocialicon = new KingSocialIcon();
