@@ -1,0 +1,22 @@
+{
+    "name": "user/social-icon",
+    "description": "socoal icon",
+    "type": "project",
+    "license": "GPL",
+    "autoload": {
+        "psr-4": {
+            "User\\SocialIcon\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ejike Kingsley",
+            "email": "ejikekelechi71@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}, 
+    "autoload-dev": {
+        "psr-4": {"inc\\":   "./inc"}
+    }
+}
