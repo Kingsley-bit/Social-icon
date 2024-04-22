@@ -11,7 +11,7 @@ public function register(){
 }
 //Enqueue styles and scripts
 function custom_social_sharing_scripts() {
-    wp_enqueue_style('custom-social-sharing-style', $this->plugin_url . 'asset/style.css');
+    wp_enqueue_style('custom-social-sharing-style', $this->plugin_url . 'asset/socialstyle.css');
     wp_enqueue_script('custom-social-sharing-script', $this->plugin_url . 'asset/script.js');
 }
 }

@@ -98,6 +98,13 @@ function custom_social_sharing_initialize_settings() {
         'custom_social_sharing_options',
         'custom_social_sharing_main_section'
     );
+    add_settings_field(
+        'custom_social_sharing_heading',
+        'Heading',
+        array($this, 'heading_callback'),
+        'custom_social_sharing_options',
+        'custom_social_sharing_main_section'
+    );
 }
 
 
@@ -136,6 +143,9 @@ function custom_social_sharing_validate_options($input) {
     if (isset($input['tracking'])) {
         // Ensure that the value is either 1 or 0
         $output['tracking'] = $input['tracking'] ? 1 : 0;
+    }
+    if(isset($input['heading'])) {
+        $output['heading'] = sanitize_text_field($input['heading']);
     }
 
     return $output;
@@ -222,14 +232,18 @@ function custom_social_sharing_tracking_callback() {
 
 
 // Add additional settings fields as needed
+function heading_callback(){
+    $options = get_option('custom_social_sharing_options');
+    echo '<input type="text" name="custom_social_sharing_options[heading]"  value="' . esc_attr($options['heading']) . '"  >';
+}
 
 
 // Add social sharing buttons based on options
 function custom_social_sharing_buttons($content) {
     $options = get_option('custom_social_sharing_options');
     if ($options['enable'] && is_singular()) { // Display only if enabled and on single post/page
-        $buttons_html = '<div class="custom-social-sharing ' . esc_attr($options['css_classes']) . ' social-icons-container">';
-
+        $buttons_html = '<div class="custom-social-sharing ' . esc_attr($options['css_classes']) . ' ">';
+        $buttons_html .= '<h3  class="social-heading">'. $options['heading'] .'</h3>';
         $networks = $options['networks'];
         foreach ($networks as $network => $enabled) {
             if ($enabled) {

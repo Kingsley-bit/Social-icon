@@ -3,12 +3,21 @@
     display: flex;
     justify-content: center;
     gap: 20px; /* Adjust the gap between icons */
+    background-color: white;
+    padding: 30px;
+    border: yellow;
 }
 
 /* Style for the wrapper of each social icon and label */
 .social-icon-wrapper {
     position: relative;
     text-align: center;
+    
+}
+.social-heading{
+    color: blue;
+    text-align: center;
+    
 }
 
 /* Style for individual social icons */
